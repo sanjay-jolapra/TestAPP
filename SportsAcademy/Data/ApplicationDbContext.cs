@@ -28,6 +28,9 @@ public class ApplicationDbContext : DbContext
     public DbSet<InjuryRecord> InjuryRecords => Set<InjuryRecord>();
     public DbSet<NutritionLog> NutritionLogs => Set<NutritionLog>();
     public DbSet<NutritionGoal> NutritionGoals => Set<NutritionGoal>();
+    public DbSet<Role> Roles => Set<Role>();
+    public DbSet<AppUser> AppUsers => Set<AppUser>();
+    public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -92,5 +95,93 @@ public class ApplicationDbContext : DbContext
             new TeamworkTest { Id = 3, Name = "Cooperation", MeasurementUnit = "Score (1-10)", Measures = "Team Cooperation", MaxScore = 10 },
             new TeamworkTest { Id = 4, Name = "Sportsmanship", MeasurementUnit = "Score (1-10)", Measures = "Fair Play", MaxScore = 10 }
         );
+
+        // Seed Roles
+        modelBuilder.Entity<Role>().HasData(
+            new Role { Id = 1, Name = "Admin",   Description = "Full access to all modules", IsActive = true },
+            new Role { Id = 2, Name = "Coach",   Description = "Access to assessments and student records", IsActive = true },
+            new Role { Id = 3, Name = "Trainer", Description = "Attendance and fitness tracking only", IsActive = true },
+            new Role { Id = 4, Name = "Viewer",  Description = "Read-only access to reports", IsActive = true }
+        );
+
+        // Admin — full permissions on all modules
+        int permId = 1;
+        foreach (var module in AppModules.All)
+        {
+            modelBuilder.Entity<RolePermission>().HasData(new RolePermission
+            {
+                Id = permId++, RoleId = 1, Module = module,
+                CanView = true, CanCreate = true, CanEdit = true, CanDelete = true
+            });
+        }
+
+        // Coach — view/create/edit most modules, no user management or delete
+        string[] coachModules = [
+            AppModules.Dashboard, AppModules.Batches, AppModules.Students,
+            AppModules.Attendance, AppModules.FitnessTests, AppModules.MovementScreening,
+            AppModules.SkillDevelopment, AppModules.StrengthConditioning,
+            AppModules.MentalToughness, AppModules.Teamwork,
+            AppModules.InjuryTracking, AppModules.Nutrition, AppModules.Performance
+        ];
+        foreach (var module in coachModules)
+        {
+            modelBuilder.Entity<RolePermission>().HasData(new RolePermission
+            {
+                Id = permId++, RoleId = 2, Module = module,
+                CanView = true, CanCreate = true, CanEdit = true, CanDelete = false
+            });
+        }
+
+        // Trainer — attendance and fitness only
+        string[] trainerModules = [
+            AppModules.Dashboard, AppModules.Students, AppModules.Attendance,
+            AppModules.FitnessTests, AppModules.MovementScreening,
+            AppModules.StrengthConditioning, AppModules.InjuryTracking
+        ];
+        foreach (var module in trainerModules)
+        {
+            modelBuilder.Entity<RolePermission>().HasData(new RolePermission
+            {
+                Id = permId++, RoleId = 3, Module = module,
+                CanView = true, CanCreate = true, CanEdit = false, CanDelete = false
+            });
+        }
+
+        // Viewer — read-only on everything except user management
+        string[] viewerModules = [
+            AppModules.Dashboard, AppModules.Students, AppModules.Attendance,
+            AppModules.Fees, AppModules.FitnessTests, AppModules.MovementScreening,
+            AppModules.SkillDevelopment, AppModules.StrengthConditioning,
+            AppModules.MentalToughness, AppModules.Teamwork,
+            AppModules.InjuryTracking, AppModules.Nutrition, AppModules.Performance
+        ];
+        foreach (var module in viewerModules)
+        {
+            modelBuilder.Entity<RolePermission>().HasData(new RolePermission
+            {
+                Id = permId++, RoleId = 4, Module = module,
+                CanView = true, CanCreate = false, CanEdit = false, CanDelete = false
+            });
+        }
+
+        // Seed default admin user (password: Admin@123)
+        modelBuilder.Entity<AppUser>().HasData(new AppUser
+        {
+            Id = 1,
+            FullName = "System Administrator",
+            Username = "admin",
+            PasswordHash = BCryptNet.HashPassword("Admin@123"),
+            Email = "admin@sportsacademy.com",
+            IsActive = true,
+            RoleId = 1,
+            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+        });
     }
+}
+
+// Alias to avoid long using statement in the file
+file static class BCryptNet
+{
+    public static string HashPassword(string password)
+        => BCrypt.Net.BCrypt.HashPassword(password, workFactor: 12);
 }

@@ -1,0 +1,97 @@
+@model List<SportsAcademy.Models.RolePermission>
+@{
+    ViewData["Title"] = $"Permissions – {ViewBag.RoleName}";
+    var role = ViewBag.Role as SportsAcademy.Models.Role;
+}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold mb-0">
+            <i class="fas fa-key me-2 text-warning"></i>Permissions
+        </h4>
+        <p class="text-muted small mb-0">Role: <strong>@ViewBag.RoleName</strong></p>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-arrow-left me-1"></i> Back to Roles
+    </a>
+</div>
+
+<form asp-action="SavePermissions" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="roleId" value="@ViewBag.RoleId" />
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-bordered table-hover mb-0 align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th style="width:30%">Module</th>
+                        <th class="text-center"><i class="fas fa-eye me-1"></i>View</th>
+                        <th class="text-center"><i class="fas fa-plus me-1"></i>Create</th>
+                        <th class="text-center"><i class="fas fa-edit me-1"></i>Edit</th>
+                        <th class="text-center"><i class="fas fa-trash me-1"></i>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.Count; i++)
+                    {
+                        var perm = Model[i];
+                        var label = SportsAcademy.Models.AppModules.Labels.TryGetValue(perm.Module, out var lbl) ? lbl : perm.Module;
+                        <tr>
+                            <td>
+                                <input type="hidden" name="permissions[@i].Module" value="@perm.Module" />
+                                <strong>@label</strong>
+                                <div class="text-muted small">@perm.Module</div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-flex justify-content-center">
+                                    <input type="checkbox" name="permissions[@i].CanView" value="true"
+                                           class="form-check-input" @(perm.CanView ? "checked" : "") />
+                                    <input type="hidden" name="permissions[@i].CanView" value="false" />
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-flex justify-content-center">
+                                    <input type="checkbox" name="permissions[@i].CanCreate" value="true"
+                                           class="form-check-input" @(perm.CanCreate ? "checked" : "") />
+                                    <input type="hidden" name="permissions[@i].CanCreate" value="false" />
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-flex justify-content-center">
+                                    <input type="checkbox" name="permissions[@i].CanEdit" value="true"
+                                           class="form-check-input" @(perm.CanEdit ? "checked" : "") />
+                                    <input type="hidden" name="permissions[@i].CanEdit" value="false" />
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-flex justify-content-center">
+                                    <input type="checkbox" name="permissions[@i].CanDelete" value="true"
+                                           class="form-check-input" @(perm.CanDelete ? "checked" : "") />
+                                    <input type="hidden" name="permissions[@i].CanDelete" value="false" />
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer bg-white d-flex gap-2">
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-save me-1"></i> Save Permissions
+            </button>
+            <button type="button" class="btn btn-outline-secondary" id="btnSelectAll">Select All</button>
+            <button type="button" class="btn btn-outline-secondary" id="btnClearAll">Clear All</button>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+<script>
+    document.getElementById('btnSelectAll').addEventListener('click', function () {
+        document.querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = true);
+    });
+    document.getElementById('btnClearAll').addEventListener('click', function () {
+        document.querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = false);
+    });
+</script>
+}

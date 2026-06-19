@@ -1,3 +1,4 @@
+using SportsAcademy.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +7,8 @@ using SportsAcademy.Models;
 
 namespace SportsAcademy.Controllers;
 
+
+[RequirePermission(AppModules.Attendance)]
 public class AttendanceController : Controller
 {
     private readonly ApplicationDbContext _db;
@@ -87,6 +90,7 @@ public class AttendanceController : Controller
         return View(records);
     }
 }
+
 
 public class AttendanceVM
 {

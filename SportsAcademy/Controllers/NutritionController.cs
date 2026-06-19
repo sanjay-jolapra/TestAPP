@@ -1,3 +1,4 @@
+using SportsAcademy.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +7,8 @@ using SportsAcademy.Models;
 
 namespace SportsAcademy.Controllers;
 
+
+[RequirePermission(AppModules.Nutrition)]
 public class NutritionController : Controller
 {
     private readonly ApplicationDbContext _db;

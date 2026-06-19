@@ -1,3 +1,4 @@
+using SportsAcademy.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SportsAcademy.Data;
@@ -5,6 +6,8 @@ using SportsAcademy.Models;
 
 namespace SportsAcademy.Controllers;
 
+
+[RequirePermission(AppModules.Dashboard)]
 public class HomeController : Controller
 {
     private readonly ApplicationDbContext _db;
