@@ -1,0 +1,12 @@
+@model TeamworkResult
+@{ViewData["Title"] = "Record Teamwork Result";}
+<div class="page-header"><div><h1 class="page-title">Record Teamwork Assessment</h1></div><a asp-action="Results" class="btn btn-outline-secondary">Results</a></div>
+<div class="card" style="max-width:600px;"><div class="card-body"><form asp-action="RecordResult" method="post">@Html.AntiForgeryToken()
+<div class="row g-3">
+<div class="col-md-6"><label class="form-label">Test *</label><select asp-for="TeamworkTestId" asp-items="ViewBag.Tests" class="form-select"><option value="">Select Test</option></select></div>
+<div class="col-md-6"><label class="form-label">Student *</label><select asp-for="StudentId" asp-items="ViewBag.Students" class="form-select"><option value="">Select Student</option></select></div>
+<div class="col-md-6"><label class="form-label">Date *</label><input asp-for="AssessmentDate" type="date" class="form-control" /></div>
+<div class="col-md-6"><label class="form-label">Score *</label><input asp-for="Score" class="form-control" type="number" min="0" max="100" /></div>
+<div class="col-12"><label class="form-label">Notes</label><textarea asp-for="Notes" class="form-control" rows="2"></textarea></div>
+<div class="col-12"><button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Save</button></div>
+</div></form></div></div>

@@ -1,0 +1,17 @@
+@model InjuryRecord
+@{ViewData["Title"] = "Log Injury";}
+<div class="page-header"><div><h1 class="page-title">Log Injury</h1></div><a asp-action="Index" class="btn btn-outline-secondary">Back</a></div>
+<div class="card" style="max-width:700px;"><div class="card-body"><form asp-action="Create" method="post">@Html.AntiForgeryToken()
+<div class="row g-3">
+<div class="col-md-6"><label class="form-label">Student *</label><select asp-for="StudentId" asp-items="ViewBag.Students" class="form-select"><option value="">Select Student</option></select></div>
+<div class="col-md-6"><label class="form-label">Injury Date *</label><input asp-for="InjuryDate" type="date" class="form-control" /></div>
+<div class="col-md-6"><label class="form-label">Injury Type *</label><input asp-for="InjuryType" class="form-control" placeholder="e.g. Sprain, Fracture, Strain" /></div>
+<div class="col-md-6"><label class="form-label">Body Part</label><input asp-for="BodyPart" class="form-control" placeholder="e.g. Left Knee, Right Shoulder" /></div>
+<div class="col-md-4"><label class="form-label">Severity *</label><select asp-for="Severity" asp-items="Html.GetEnumSelectList<InjurySeverity>()" class="form-select"></select></div>
+<div class="col-md-4"><label class="form-label">Status</label><select asp-for="Status" asp-items="Html.GetEnumSelectList<InjuryStatus>()" class="form-select"></select></div>
+<div class="col-md-4"><label class="form-label">Expected Return Date</label><input asp-for="ReturnDate" type="date" class="form-control" /></div>
+<div class="col-md-6"><label class="form-label">Doctor / Physio</label><input asp-for="DoctorPhysio" class="form-control" /></div>
+<div class="col-12"><label class="form-label">Description</label><textarea asp-for="Description" class="form-control" rows="2"></textarea></div>
+<div class="col-12"><label class="form-label">Treatment Given</label><textarea asp-for="TreatmentGiven" class="form-control" rows="2"></textarea></div>
+<div class="col-12"><button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Save</button></div>
+</div></form></div></div>

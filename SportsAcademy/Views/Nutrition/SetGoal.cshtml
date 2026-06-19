@@ -1,0 +1,15 @@
+@model NutritionGoal
+@{ViewData["Title"] = "Set Nutrition Goals";}
+<div class="page-header"><div><h1 class="page-title">Set Nutrition Goals</h1><p class="page-subtitle">@ViewBag.Student?.Name</p></div><a asp-action="Index" class="btn btn-outline-secondary">Back</a></div>
+<div class="card" style="max-width:600px;"><div class="card-body"><form asp-action="SetGoal" method="post">@Html.AntiForgeryToken()
+<input asp-for="StudentId" type="hidden" />
+<div class="row g-3">
+<div class="col-md-6"><label class="form-label">Daily Calorie Goal</label><input asp-for="DailyCalories" class="form-control" type="number" step="0.1" /></div>
+<div class="col-md-6"><label class="form-label">Protein Goal (g)</label><input asp-for="ProteinGoal" class="form-control" type="number" step="0.1" /></div>
+<div class="col-md-6"><label class="form-label">Carbs Goal (g)</label><input asp-for="CarbsGoal" class="form-control" type="number" step="0.1" /></div>
+<div class="col-md-6"><label class="form-label">Fats Goal (g)</label><input asp-for="FatsGoal" class="form-control" type="number" step="0.1" /></div>
+<div class="col-md-6"><label class="form-label">Water Goal (ml)</label><input asp-for="WaterGoal" class="form-control" type="number" /></div>
+<div class="col-md-6"><label class="form-label">Effective From</label><input asp-for="EffectiveFrom" type="date" class="form-control" /></div>
+<div class="col-12"><label class="form-label">Notes</label><textarea asp-for="Notes" class="form-control" rows="2"></textarea></div>
+<div class="col-12"><button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Save Goals</button></div>
+</div></form></div></div>

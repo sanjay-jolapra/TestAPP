@@ -1,0 +1,84 @@
+@model Student
+@{ViewData["Title"] = Model.Name;}
+
+<div class="page-header">
+    <div><h1 class="page-title">@Model.Name</h1><p class="page-subtitle">@Model.StudentCode</p></div>
+    <div class="d-flex gap-2">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary"><i class="fas fa-edit me-1"></i>Edit</a>
+        <a asp-controller="Performance" asp-action="StudentReport" asp-route-id="@Model.Id" class="btn btn-success"><i class="fas fa-chart-line me-1"></i>Performance</a>
+        <a asp-action="Index" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back</a>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-3">
+        <div class="card text-center p-3">
+            @if (!string.IsNullOrEmpty(Model.PhotoPath))
+            {
+                <img src="@Model.PhotoPath" class="rounded-circle mx-auto d-block mb-3" style="width:100px;height:100px;object-fit:cover;" />
+            }
+            else
+            {
+                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-3" style="width:100px;height:100px;font-size:2.5rem;font-weight:800;">
+                    @Model.Name.Substring(0,1)
+                </div>
+            }
+            <h5 class="fw-bold mb-1">@Model.Name</h5>
+            <code class="text-muted">@Model.StudentCode</code>
+            @if (!string.IsNullOrEmpty(Model.BloodGroup))
+            {<br/><span class="badge bg-danger mt-1">@Model.BloodGroup</span>}
+            @if (Model.Batch != null)
+            {<br/><span class="badge bg-primary mt-1">@Model.Batch.Name</span>}
+        </div>
+        <!-- Quick links -->
+        <div class="card mt-3">
+            <div class="card-body p-2">
+                <div class="d-grid gap-1">
+                    <a asp-controller="Attendance" asp-action="Report" asp-route-studentId="@Model.Id" class="btn btn-sm btn-outline-success"><i class="fas fa-clipboard-check me-1"></i>Attendance Report</a>
+                    <a asp-controller="Fees" asp-action="StudentLedger" asp-route-studentId="@Model.Id" class="btn btn-sm btn-outline-warning"><i class="fas fa-rupee-sign me-1"></i>Fee Ledger</a>
+                    <a asp-controller="InjuryTracking" asp-action="StudentHistory" asp-route-studentId="@Model.Id" class="btn btn-sm btn-outline-danger"><i class="fas fa-band-aid me-1"></i>Injury History</a>
+                    <a asp-controller="Nutrition" asp-action="Index" asp-route-studentId="@Model.Id" class="btn btn-sm btn-outline-info"><i class="fas fa-apple-alt me-1"></i>Nutrition</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <div class="card">
+            <div class="card-header bg-white"><h6 class="mb-0 fw-bold">Personal Information</h6></div>
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-sm-6"><small class="text-muted d-block">Phone</small><span>@(Model.Phone ?? "-")</span></div>
+                    <div class="col-sm-6"><small class="text-muted d-block">Parent Name</small><span>@(Model.ParentName ?? "-")</span></div>
+                    <div class="col-sm-6"><small class="text-muted d-block">Parent Phone</small><span>@(Model.ParentPhone ?? "-")</span></div>
+                    <div class="col-sm-6"><small class="text-muted d-block">Date of Birth</small><span>@(Model.DateOfBirth?.ToString("dd MMM yyyy") ?? "-") @(Model.Age.HasValue ? $"({Model.Age} yrs)" : "")</span></div>
+                    <div class="col-sm-6"><small class="text-muted d-block">School / College</small><span>@(Model.SchoolCollege ?? "-")</span></div>
+                    <div class="col-sm-6"><small class="text-muted d-block">Jersey Size</small><span>@(Model.JerseySize ?? "-")</span></div>
+                    <div class="col-sm-6"><small class="text-muted d-block">Joining Date</small><span>@Model.JoiningDate.ToString("dd MMM yyyy")</span></div>
+                    <div class="col-12"><small class="text-muted d-block">Address</small><span>@(Model.Address ?? "-")</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-3 mt-1">
+            <div class="col-md-4">
+                <div class="card text-center p-3">
+                    <div class="fw-bold fs-4 text-success">@Model.AttendanceRecords.Count(a => a.Status == AttendanceStatus.Present)</div>
+                    <small class="text-muted">Days Present</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center p-3">
+                    <div class="fw-bold fs-4 text-warning">₹@Model.FeePayments.Sum(f => f.Amount).ToString("N0")</div>
+                    <small class="text-muted">Total Fees Paid</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center p-3">
+                    <div class="fw-bold fs-4 text-danger">@Model.InjuryRecords.Count(i => i.Status == InjuryStatus.Active)</div>
+                    <small class="text-muted">Active Injuries</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

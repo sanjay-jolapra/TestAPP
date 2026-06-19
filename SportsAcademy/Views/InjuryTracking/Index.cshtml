@@ -1,0 +1,28 @@
+@model IEnumerable<InjuryRecord>
+@{ViewData["Title"] = "Injury Tracking";}
+<div class="page-header"><div><h1 class="page-title">Injury Tracking</h1></div>
+<a asp-action="Create" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Log Injury</a></div>
+<div class="card mb-3"><div class="card-body py-2">
+<div class="d-flex gap-2">
+<a asp-action="Index" class="btn btn-sm @(ViewBag.Filter==null?"btn-primary":"btn-outline-primary")">All</a>
+<a asp-action="Index" asp-route-status="Active" class="btn btn-sm @(ViewBag.Filter?.ToString()=="Active"?"btn-danger":"btn-outline-danger")">Active</a>
+<a asp-action="Index" asp-route-status="Recovered" class="btn btn-sm @(ViewBag.Filter?.ToString()=="Recovered"?"btn-success":"btn-outline-success")">Recovered</a>
+<a asp-action="Index" asp-route-status="UnderTreatment" class="btn btn-sm @(ViewBag.Filter?.ToString()=="UnderTreatment"?"btn-warning":"btn-outline-warning")">Under Treatment</a>
+</div></div></div>
+<div class="card"><div class="card-body"><table class="table table-hover data-table">
+<thead><tr><th>Student</th><th>Injury</th><th>Body Part</th><th>Severity</th><th>Date</th><th>Status</th><th>Return Date</th><th>Actions</th></tr></thead>
+<tbody>
+@foreach (var r in Model)
+{<tr>
+<td><a asp-action="StudentHistory" asp-route-studentId="@r.StudentId" class="fw-semibold text-decoration-none">@r.Student?.Name</a></td>
+<td>@r.InjuryType</td><td>@r.BodyPart</td>
+<td><span class="badge @(r.Severity==InjurySeverity.Severe?"bg-danger":r.Severity==InjurySeverity.Moderate?"bg-warning":"bg-success")">@r.Severity</span></td>
+<td>@r.InjuryDate.ToString("dd MMM yyyy")</td>
+<td><span class="badge @(r.Status==InjuryStatus.Active?"bg-danger":r.Status==InjuryStatus.Recovered?"bg-success":"bg-warning")">@r.Status</span></td>
+<td>@(r.ReturnDate?.ToString("dd MMM yyyy") ?? "-")</td>
+<td><div class="btn-group btn-group-sm">
+<a asp-action="Edit" asp-route-id="@r.Id" class="btn btn-outline-primary"><i class="fas fa-edit"></i></a>
+<form asp-action="Delete" asp-route-id="@r.Id" method="post" onsubmit="return confirm('Delete?');" style="display:inline;">@Html.AntiForgeryToken()<button type="submit" class="btn btn-outline-danger"><i class="fas fa-trash"></i></button></form>
+</div></td>
+</tr>}
+</tbody></table></div></div>

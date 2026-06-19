@@ -1,0 +1,40 @@
+@model IEnumerable<FitnessTest>
+@{ViewData["Title"] = "Fitness Tests";}
+
+<div class="page-header">
+    <div><h1 class="page-title">Fitness Tests</h1></div>
+    <div class="d-flex gap-2">
+        <a asp-action="RecordResult" class="btn btn-success btn-sm"><i class="fas fa-plus me-1"></i>Record Result</a>
+        <a asp-action="Results" class="btn btn-outline-primary btn-sm"><i class="fas fa-list me-1"></i>View Results</a>
+        <a asp-action="CreateTest" class="btn btn-outline-secondary btn-sm"><i class="fas fa-plus me-1"></i>Add Test</a>
+    </div>
+</div>
+
+<div class="row g-3">
+    @foreach (var t in Model)
+    {
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h6 class="fw-bold mb-1">@t.Name</h6>
+                        <span class="badge @(t.IsActive ? "bg-success" : "bg-secondary")">@(t.IsActive ? "Active" : "Inactive")</span>
+                    </div>
+                    <p class="text-muted small mb-2">@t.Description</p>
+                    <div class="d-flex gap-2 flex-wrap">
+                        @if (!string.IsNullOrEmpty(t.Measures)){ <span class="badge bg-primary bg-opacity-10 text-primary">@t.Measures</span> }
+                        @if (!string.IsNullOrEmpty(t.MeasurementUnit)){ <span class="badge bg-light text-dark">Unit: @t.MeasurementUnit</span> }
+                    </div>
+                    <div class="mt-2"><small class="text-muted">@t.Results.Count results recorded</small></div>
+                </div>
+                <div class="card-footer bg-white border-top-0">
+                    <div class="btn-group btn-group-sm w-100">
+                        <a asp-action="RecordResult" asp-route-testId="@t.Id" class="btn btn-outline-success"><i class="fas fa-plus me-1"></i>Record</a>
+                        <a asp-action="Results" asp-route-testId="@t.Id" class="btn btn-outline-primary"><i class="fas fa-list me-1"></i>Results</a>
+                        <a asp-action="EditTest" asp-route-id="@t.Id" class="btn btn-outline-secondary"><i class="fas fa-edit"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

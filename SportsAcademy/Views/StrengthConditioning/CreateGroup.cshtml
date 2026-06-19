@@ -1,0 +1,9 @@
+@model SCGroup
+@{ViewData["Title"] = "Add S&C Group";}
+<div class="page-header"><div><h1 class="page-title">Add S&C Group</h1></div><a asp-action="Index" class="btn btn-outline-secondary">Back</a></div>
+<div class="card" style="max-width:500px;"><div class="card-body"><form asp-action="CreateGroup" method="post">@Html.AntiForgeryToken()
+<div class="row g-3">
+<div class="col-12"><label class="form-label">Group Name *</label><input asp-for="Name" class="form-control" placeholder="e.g. Warm-up, Strength" /></div>
+<div class="col-12"><label class="form-label">Description</label><textarea asp-for="Description" class="form-control" rows="2"></textarea></div>
+<div class="col-12"><button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Save</button></div>
+</div></form></div></div>

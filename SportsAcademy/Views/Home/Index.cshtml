@@ -1,0 +1,153 @@
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card bg-gradient-primary">
+            <div class="stat-value">@ViewBag.TotalStudents</div>
+            <div class="stat-label"><i class="fas fa-users me-1"></i>Total Students</div>
+            <i class="fas fa-users stat-icon"></i>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card bg-gradient-success">
+            <div class="stat-value">@ViewBag.TodayAttendance</div>
+            <div class="stat-label"><i class="fas fa-clipboard-check me-1"></i>Present Today</div>
+            <i class="fas fa-clipboard-check stat-icon"></i>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card bg-gradient-danger">
+            <div class="stat-value">@ViewBag.ActiveInjuries</div>
+            <div class="stat-label"><i class="fas fa-band-aid me-1"></i>Active Injuries</div>
+            <i class="fas fa-band-aid stat-icon"></i>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card bg-gradient-purple">
+            <div class="stat-value">@DateTime.Today.ToString("MMM")</div>
+            <div class="stat-label"><i class="fas fa-calendar me-1"></i>Current Month</div>
+            <i class="fas fa-calendar stat-icon"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="card mb-4">
+    <div class="card-body">
+        <h6 class="fw-bold mb-3 text-muted text-uppercase" style="font-size:.75rem;letter-spacing:1px;">Quick Actions</h6>
+        <div class="row g-2">
+            <div class="col-6 col-md-3 col-lg-2">
+                <a asp-controller="Students" asp-action="Create" class="quick-action bg-primary bg-opacity-10 text-primary">
+                    <i class="fas fa-user-plus d-block"></i>
+                    <small class="fw-semibold">Add Student</small>
+                </a>
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <a asp-controller="Attendance" asp-action="Index" class="quick-action bg-success bg-opacity-10 text-success">
+                    <i class="fas fa-clipboard-check d-block"></i>
+                    <small class="fw-semibold">Take Attendance</small>
+                </a>
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <a asp-controller="Fees" asp-action="Create" class="quick-action bg-warning bg-opacity-10 text-warning">
+                    <i class="fas fa-rupee-sign d-block"></i>
+                    <small class="fw-semibold">Record Fee</small>
+                </a>
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <a asp-controller="FitnessTests" asp-action="RecordResult" class="quick-action bg-danger bg-opacity-10 text-danger">
+                    <i class="fas fa-heartbeat d-block"></i>
+                    <small class="fw-semibold">Fitness Test</small>
+                </a>
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <a asp-controller="InjuryTracking" asp-action="Create" class="quick-action bg-danger bg-opacity-10 text-danger">
+                    <i class="fas fa-band-aid d-block"></i>
+                    <small class="fw-semibold">Log Injury</small>
+                </a>
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <a asp-controller="Performance" asp-action="Index" class="quick-action bg-purple bg-opacity-10" style="background:rgba(139,92,246,.1);color:#8b5cf6;">
+                    <i class="fas fa-chart-line d-block"></i>
+                    <small class="fw-semibold">AI Scores</small>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <!-- Recent Payments -->
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                <h6 class="mb-0 fw-bold"><i class="fas fa-rupee-sign me-2 text-warning"></i>Recent Fee Payments</h6>
+                <a asp-controller="Fees" asp-action="Index" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body p-0">
+                @if (ViewBag.RecentPayments != null)
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr><th>Student</th><th>Amount</th><th>Date</th><th>Type</th></tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var p in (IEnumerable<FeePayment>)ViewBag.RecentPayments)
+                                {
+                                    <tr>
+                                        <td>@p.Student?.Name</td>
+                                        <td><span class="fw-semibold text-success">₹@p.Amount.ToString("N0")</span></td>
+                                        <td>@p.PaidDate.ToString("dd MMM yyyy")</td>
+                                        <td><span class="badge bg-info">@p.PeriodType</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else { <p class="p-3 text-muted">No recent payments.</p> }
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Injuries -->
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                <h6 class="mb-0 fw-bold"><i class="fas fa-band-aid me-2 text-danger"></i>Active Injuries</h6>
+                <a asp-controller="InjuryTracking" asp-action="Index" class="btn btn-sm btn-outline-danger">View All</a>
+            </div>
+            <div class="card-body p-0">
+                @if (ViewBag.RecentInjuries != null)
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr><th>Student</th><th>Injury</th><th>Severity</th><th>Date</th></tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var inj in (IEnumerable<InjuryRecord>)ViewBag.RecentInjuries)
+                                {
+                                    <tr>
+                                        <td>@inj.Student?.Name</td>
+                                        <td>@inj.InjuryType</td>
+                                        <td>
+                                            <span class="badge @(inj.Severity == InjurySeverity.Severe ? "bg-danger" : inj.Severity == InjurySeverity.Moderate ? "bg-warning" : "bg-success")">
+                                                @inj.Severity
+                                            </span>
+                                        </td>
+                                        <td>@inj.InjuryDate.ToString("dd MMM")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else { <p class="p-3 text-muted">No active injuries.</p> }
+            </div>
+        </div>
+    </div>
+</div>

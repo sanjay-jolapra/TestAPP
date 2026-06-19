@@ -1,0 +1,85 @@
+@using SportsAcademy.Controllers
+@model IEnumerable<AthleteScoreVM>
+@{ViewData["Title"] = "AI Performance Scoring";}
+
+<div class="page-header">
+    <div><h1 class="page-title">AI Athlete Performance Scoring</h1><p class="page-subtitle">Composite scores based on multi-dimensional assessment data</p></div>
+</div>
+
+<div class="row g-3 mb-4">
+    @{
+        var elite = Model.Count(s => s.PerformanceTier == "Elite");
+        var advanced = Model.Count(s => s.PerformanceTier == "Advanced");
+        var developing = Model.Count(s => s.PerformanceTier == "Developing");
+    }
+    <div class="col-md-3"><div class="stat-card bg-gradient-warning"><div class="stat-value">@elite</div><div class="stat-label">Elite Athletes</div><i class="fas fa-crown stat-icon"></i></div></div>
+    <div class="col-md-3"><div class="stat-card bg-gradient-primary"><div class="stat-value">@advanced</div><div class="stat-label">Advanced</div><i class="fas fa-star stat-icon"></i></div></div>
+    <div class="col-md-3"><div class="stat-card bg-gradient-success"><div class="stat-value">@developing</div><div class="stat-label">Developing</div><i class="fas fa-seedling stat-icon"></i></div></div>
+    <div class="col-md-3"><div class="stat-card bg-gradient-teal"><div class="stat-value">@Model.Count()</div><div class="stat-label">Total Athletes</div><i class="fas fa-users stat-icon"></i></div></div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-white"><h6 class="mb-0 fw-bold"><i class="fas fa-chart-line me-2 text-primary"></i>Athlete Rankings</h6></div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr><th>#</th><th>Athlete</th><th>Batch</th><th>Tier</th><th>Fitness</th><th>Movement</th><th>Skills</th><th>S&C</th><th>Mental</th><th>Teamwork</th><th>Attendance</th><th>Overall</th><th></th></tr>
+                </thead>
+                <tbody>
+                    @{int rank = 1;}
+                    @foreach (var s in Model)
+                    {
+                        <tr>
+                            <td><span class="fw-bold @(rank<=3?"text-warning":"text-muted")">#@rank</span></td>
+                            <td>
+                                <div class="fw-semibold">@s.Student.Name</div>
+                                <small class="text-muted">@s.Student.StudentCode</small>
+                            </td>
+                            <td><span class="badge bg-light text-dark">@(s.Student.Batch?.Name ?? "-")</span></td>
+                            <td><span class="badge tier-@s.PerformanceTier.ToLower()">@s.PerformanceTier</span></td>
+                            <td><small>@s.FitnessScore.ToString("0.0")</small></td>
+                            <td><small>@s.MovementScore.ToString("0.0")</small></td>
+                            <td><small>@s.SkillScore.ToString("0.0")</small></td>
+                            <td><small>@s.SCScore.ToString("0.0")</small></td>
+                            <td><small>@s.MentalScore.ToString("0.0")</small></td>
+                            <td><small>@s.TeamworkScore.ToString("0.0")</small></td>
+                            <td><small>@s.AttendanceRate.ToString("0.0")</small></td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="score-bar flex-grow-1" style="width:80px;">
+                                        <div class="score-fill bg-@s.TierColor" style="width:@(s.OverallScore*10)%"></div>
+                                    </div>
+                                    <span class="fw-bold">@s.OverallScore.ToString("0.0")</span>
+                                </div>
+                            </td>
+                            <td><a asp-action="StudentReport" asp-route-id="@s.Student.Id" class="btn btn-sm btn-outline-primary"><i class="fas fa-chart-radar"></i></a></td>
+                        </tr>
+                        rank++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-body">
+        <h6 class="fw-bold mb-3">Score Composition Weights</h6>
+        <div class="row g-2">
+            @{
+                var weights = new[]{ ("Fitness", 20, "primary"), ("Movement Screening", 15, "info"), ("Skill Development", 20, "success"), ("Strength & Conditioning", 15, "warning"), ("Mental Toughness", 15, "purple"), ("Teamwork & Leadership", 15, "danger") };
+            }
+            @foreach (var (label, pct, color) in weights)
+            {
+                <div class="col-md-2 col-sm-4">
+                    <div class="text-center p-2 border rounded">
+                        <div class="fw-bold text-@color" style="font-size:1.5rem;">@pct%</div>
+                        <small class="text-muted">@label</small>
+                    </div>
+                </div>
+            }
+        </div>
+        <small class="text-muted mt-2 d-block">+ Attendance Rate (10% modifier). Scores are scaled 0-10. All values averaged from last 3 months of records.</small>
+    </div>
+</div>

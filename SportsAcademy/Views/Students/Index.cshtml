@@ -1,0 +1,67 @@
+@model IEnumerable<Student>
+@{ViewData["Title"] = "Students";}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Students</h1>
+        <p class="page-subtitle">@Model.Count() students enrolled</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary"><i class="fas fa-plus me-2"></i>Add Student</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover data-table">
+                <thead>
+                    <tr>
+                        <th>Photo</th><th>Student ID</th><th>Name</th><th>Phone</th>
+                        <th>Parent</th><th>Batch</th><th>Joining Date</th><th>Blood Group</th><th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var s in Model)
+                    {
+                        <tr>
+                            <td>
+                                @if (!string.IsNullOrEmpty(s.PhotoPath))
+                                {
+                                    <img src="@s.PhotoPath" class="rounded-circle" width="36" height="36" style="object-fit:cover;" />
+                                }
+                                else
+                                {
+                                    <div class="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center text-primary fw-bold" style="width:36px;height:36px;font-size:.8rem;">
+                                        @s.Name.Substring(0, 1).ToUpper()
+                                    </div>
+                                }
+                            </td>
+                            <td><code>@s.StudentCode</code></td>
+                            <td><a asp-action="Details" asp-route-id="@s.Id" class="fw-semibold text-decoration-none">@s.Name</a></td>
+                            <td>@s.Phone</td>
+                            <td>@s.ParentName</td>
+                            <td>@(s.Batch?.Name ?? "-")</td>
+                            <td>@s.JoiningDate.ToString("dd MMM yyyy")</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(s.BloodGroup))
+                                {
+                                    <span class="badge bg-danger">@s.BloodGroup</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a asp-action="Details" asp-route-id="@s.Id" class="btn btn-outline-info" title="View"><i class="fas fa-eye"></i></a>
+                                    <a asp-action="Edit" asp-route-id="@s.Id" class="btn btn-outline-primary" title="Edit"><i class="fas fa-edit"></i></a>
+                                    <a asp-controller="Performance" asp-action="StudentReport" asp-route-id="@s.Id" class="btn btn-outline-success" title="Performance"><i class="fas fa-chart-line"></i></a>
+                                    <form asp-action="Delete" asp-route-id="@s.Id" method="post" onsubmit="return confirm('Delete this student?');" style="display:inline;">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-outline-danger" title="Delete"><i class="fas fa-trash"></i></button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

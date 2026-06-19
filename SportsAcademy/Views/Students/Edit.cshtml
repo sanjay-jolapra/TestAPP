@@ -1,0 +1,45 @@
+@model Student
+@{ViewData["Title"] = "Edit Student";}
+
+<div class="page-header">
+    <div><h1 class="page-title">Edit Student</h1><p class="page-subtitle">@Model.StudentCode</p></div>
+    <a asp-action="Index" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-2"></i>Back</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form asp-action="Edit" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <input asp-for="Id" type="hidden" />
+            <input asp-for="StudentCode" type="hidden" />
+            <div class="row g-3">
+                @if (!string.IsNullOrEmpty(Model.PhotoPath))
+                {
+                    <div class="col-12">
+                        <img src="@Model.PhotoPath" class="photo-preview" />
+                        <small class="d-block text-muted mt-1">Current photo (upload new to replace)</small>
+                    </div>
+                }
+                <div class="col-md-6"><label class="form-label">Full Name *</label><input asp-for="Name" class="form-control" /><span asp-validation-for="Name" class="text-danger small"></span></div>
+                <div class="col-md-6"><label class="form-label">Phone</label><input asp-for="Phone" class="form-control" /></div>
+                <div class="col-md-6"><label class="form-label">Parent Name</label><input asp-for="ParentName" class="form-control" /></div>
+                <div class="col-md-6"><label class="form-label">Parent Phone</label><input asp-for="ParentPhone" class="form-control" /></div>
+                <div class="col-md-4"><label class="form-label">Date of Birth</label><input asp-for="DateOfBirth" type="date" class="form-control" /></div>
+                <div class="col-md-4">
+                    <label class="form-label">Blood Group</label>
+                    <select asp-for="BloodGroup" class="form-select"><option value="">Select...</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Jersey Size</label>
+                    <select asp-for="JerseySize" class="form-select"><option value="">Select...</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option></select>
+                </div>
+                <div class="col-md-6"><label class="form-label">School / College</label><input asp-for="SchoolCollege" class="form-control" /></div>
+                <div class="col-md-6"><label class="form-label">Batch</label><select asp-for="BatchId" asp-items="ViewBag.Batches" class="form-select"><option value="">-- Select Batch --</option></select></div>
+                <div class="col-md-6"><label class="form-label">Joining Date</label><input asp-for="JoiningDate" type="date" class="form-control" /></div>
+                <div class="col-md-6"><label class="form-label">New Photo</label><input type="file" name="photo" class="form-control" accept="image/*" /></div>
+                <div class="col-12"><label class="form-label">Address</label><textarea asp-for="Address" class="form-control" rows="2"></textarea></div>
+                <div class="col-12"><hr /><button type="submit" class="btn btn-primary px-4"><i class="fas fa-save me-2"></i>Update</button><a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancel</a></div>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,15 @@
+@model IEnumerable<SkillAssessmentResult>
+@{ViewData["Title"] = "Skill Assessment Results";}
+<div class="page-header"><div><h1 class="page-title">Skill Assessment Results</h1></div><a asp-action="RecordResult" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Add</a></div>
+<div class="card mb-3"><div class="card-body py-2"><form method="get" class="row g-2 align-items-end">
+<div class="col-md-4"><select name="skillId" asp-items="ViewBag.Skills" class="form-select form-select-sm"><option value="">All Skills</option></select></div>
+<div class="col-md-4"><select name="studentId" asp-items="ViewBag.Students" class="form-select form-select-sm"><option value="">All Students</option></select></div>
+<div class="col-md-2"><button type="submit" class="btn btn-primary btn-sm w-100">Filter</button></div>
+</form></div></div>
+<div class="card"><div class="card-body"><table class="table data-table">
+<thead><tr><th>Date</th><th>Group</th><th>Skill</th><th>Student</th><th>Value</th><th>Score</th></tr></thead>
+<tbody>
+@foreach (var r in Model)
+{<tr><td>@r.AssessmentDate.ToString("dd MMM yyyy")</td><td>@r.Skill?.SkillGroup?.Name</td><td>@r.Skill?.Name</td><td>@r.Student?.Name</td>
+<td>@r.Value</td><td>@(r.Score.HasValue?$"{r.Score}/10":"-")</td></tr>}
+</tbody></table></div></div>

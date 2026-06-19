@@ -1,0 +1,185 @@
+:root {
+    --primary: #1a73e8;
+    --primary-dark: #0d47a1;
+    --accent: #34a853;
+    --sidebar-bg: #0f172a;
+    --sidebar-hover: #1e293b;
+    --sidebar-text: #94a3b8;
+    --sidebar-active: #1a73e8;
+    --topbar-height: 60px;
+    --sidebar-width: 260px;
+}
+
+* { box-sizing: border-box; }
+body { font-family: 'Segoe UI', sans-serif; background: #f1f5f9; margin: 0; }
+
+/* Sidebar */
+#sidebar {
+    width: var(--sidebar-width);
+    min-height: 100vh;
+    background: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    position: fixed;
+    top: 0; left: 0;
+    z-index: 1000;
+    overflow-y: auto;
+    transition: width 0.3s;
+}
+
+#sidebar.collapsed { width: 0; overflow: hidden; }
+
+.sidebar-brand {
+    padding: 1.2rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, #1a73e8, #0d47a1);
+}
+
+.sidebar-brand i { font-size: 1.3rem; color: #ffd700; }
+
+.sidebar-nav { list-style: none; padding: 0.5rem 0; margin: 0; }
+
+.nav-section {
+    padding: 0.8rem 1.5rem 0.3rem;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #475569;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 1.5rem;
+    color: var(--sidebar-text) !important;
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+    border-left: 3px solid transparent;
+}
+
+.nav-link:hover {
+    background: var(--sidebar-hover);
+    color: #fff !important;
+    border-left-color: #334155;
+}
+
+.nav-link.active {
+    background: rgba(26, 115, 232, 0.15);
+    color: #60a5fa !important;
+    border-left-color: var(--primary);
+    font-weight: 600;
+}
+
+.nav-link i { width: 18px; text-align: center; font-size: 0.9rem; }
+
+.sidebar-footer {
+    padding: 1rem 1.5rem;
+    color: #475569;
+    font-size: 0.75rem;
+    border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+/* Page content */
+#page-content-wrapper {
+    margin-left: var(--sidebar-width);
+    transition: margin 0.3s;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.topbar {
+    height: var(--topbar-height);
+    background: #fff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 0 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.content-area { padding: 1.5rem; flex: 1; }
+
+/* Cards */
+.card { border: none; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+.card-header { border-radius: 12px 12px 0 0 !important; border-bottom: 1px solid rgba(0,0,0,0.06); }
+
+/* Stat cards */
+.stat-card { border-radius: 16px; padding: 1.5rem; color: #fff; position: relative; overflow: hidden; }
+.stat-card .stat-icon { font-size: 3rem; opacity: 0.15; position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); }
+.stat-card .stat-value { font-size: 2.5rem; font-weight: 800; line-height: 1; }
+.stat-card .stat-label { font-size: 0.85rem; opacity: 0.85; margin-top: 0.25rem; }
+.bg-gradient-primary { background: linear-gradient(135deg, #1a73e8, #0d47a1); }
+.bg-gradient-success { background: linear-gradient(135deg, #34a853, #1e7e34); }
+.bg-gradient-warning { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.bg-gradient-danger { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+.bg-gradient-purple { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+.bg-gradient-teal { background: linear-gradient(135deg, #14b8a6, #0f766e); }
+
+/* Page header */
+.page-header { margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; }
+.page-title { font-size: 1.5rem; font-weight: 700; color: #0f172a; margin: 0; }
+.page-subtitle { color: #64748b; font-size: 0.875rem; margin-top: 0.2rem; }
+
+/* Badges */
+.badge { font-weight: 500; }
+
+/* Attendance form */
+.attendance-row { padding: 0.5rem; border-bottom: 1px solid #f1f5f9; transition: background 0.2s; }
+.attendance-row:hover { background: #f8fafc; }
+
+/* Avatar */
+.student-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: #e2e8f0; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #475569; font-size: 0.9rem; }
+.student-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+
+/* Score bar */
+.score-bar { height: 8px; border-radius: 4px; background: #e2e8f0; }
+.score-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+
+/* Performance tier badge */
+.tier-elite { background: linear-gradient(135deg, #ffd700, #ff8c00); color: #000; }
+.tier-advanced { background: linear-gradient(135deg, #1a73e8, #0d47a1); color: #fff; }
+.tier-developing { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; }
+.tier-beginner { background: linear-gradient(135deg, #64748b, #475569); color: #fff; }
+
+/* Form styling */
+.form-label { font-weight: 600; font-size: 0.85rem; color: #374151; }
+.form-control, .form-select { border-radius: 8px; border: 1.5px solid #e2e8f0; }
+.form-control:focus, .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
+
+/* Buttons */
+.btn { border-radius: 8px; font-weight: 500; }
+.btn-primary { background: var(--primary); border-color: var(--primary); }
+.btn-primary:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
+
+/* Photo upload */
+.photo-preview { width: 120px; height: 120px; border-radius: 12px; object-fit: cover; border: 3px solid #e2e8f0; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    #sidebar { width: 0; }
+    #page-content-wrapper { margin-left: 0; }
+    #sidebar.show { width: var(--sidebar-width); }
+}
+
+/* Table */
+.table th { font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; border-top: none; }
+.table-hover tbody tr:hover { background: #f8fafc; }
+
+/* Quick action cards */
+.quick-action { border-radius: 12px; padding: 1.2rem; text-align: center; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; text-decoration: none; color: inherit; display: block; }
+.quick-action:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.12); color: inherit; }
+.quick-action i { font-size: 2rem; margin-bottom: 0.5rem; }
+
+/* Nutrition macros */
+.macro-bar-wrap { margin-bottom: 0.5rem; }
+.macro-label { font-size: 0.8rem; font-weight: 600; color: #374151; }
+.macro-value { font-size: 0.8rem; color: #64748b; }

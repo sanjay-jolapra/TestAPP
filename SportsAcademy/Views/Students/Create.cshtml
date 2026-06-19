@@ -1,0 +1,95 @@
+@model Student
+@{ViewData["Title"] = "Add Student";}
+
+<div class="page-header">
+    <div><h1 class="page-title">Add New Student</h1></div>
+    <a asp-action="Index" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-2"></i>Back</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Full Name *</label>
+                    <input asp-for="Name" class="form-control" placeholder="Student full name" />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Phone</label>
+                    <input asp-for="Phone" class="form-control" placeholder="Mobile number" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Parent Name</label>
+                    <input asp-for="ParentName" class="form-control" placeholder="Father/Mother name" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Parent Phone</label>
+                    <input asp-for="ParentPhone" class="form-control" placeholder="Parent contact" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Date of Birth</label>
+                    <input asp-for="DateOfBirth" type="date" class="form-control" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Blood Group</label>
+                    <select asp-for="BloodGroup" class="form-select">
+                        <option value="">Select...</option>
+                        <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+                        <option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Jersey Size</label>
+                    <select asp-for="JerseySize" class="form-select">
+                        <option value="">Select...</option>
+                        <option>XS</option><option>S</option><option>M</option><option>L</option>
+                        <option>XL</option><option>XXL</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">School / College</label>
+                    <input asp-for="SchoolCollege" class="form-control" placeholder="Institution name" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Batch</label>
+                    <select asp-for="BatchId" asp-items="ViewBag.Batches" class="form-select">
+                        <option value="">-- Select Batch --</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Joining Date *</label>
+                    <input asp-for="JoiningDate" type="date" class="form-control" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Photo</label>
+                    <input type="file" name="photo" class="form-control" accept="image/*" onchange="previewPhoto(this)" />
+                    <img id="photoPreview" class="mt-2 photo-preview d-none" />
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Address</label>
+                    <textarea asp-for="Address" class="form-control" rows="2" placeholder="Full address"></textarea>
+                </div>
+                <div class="col-12">
+                    <hr />
+                    <button type="submit" class="btn btn-primary px-4"><i class="fas fa-save me-2"></i>Save Student</button>
+                    <a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+function previewPhoto(input) {
+    const preview = document.getElementById('photoPreview');
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => { preview.src = e.target.result; preview.classList.remove('d-none'); };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
+}

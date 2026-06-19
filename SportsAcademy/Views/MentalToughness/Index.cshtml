@@ -1,0 +1,17 @@
+@model IEnumerable<MentalToughnessTest>
+@{ViewData["Title"] = "Mental Toughness";}
+<div class="page-header"><div><h1 class="page-title">Mental Toughness</h1></div>
+<div class="d-flex gap-2"><a asp-action="RecordResult" class="btn btn-success btn-sm"><i class="fas fa-plus me-1"></i>Record Result</a><a asp-action="Results" class="btn btn-outline-primary btn-sm"><i class="fas fa-list me-1"></i>Results</a><a asp-action="CreateTest" class="btn btn-outline-secondary btn-sm"><i class="fas fa-plus me-1"></i>Add Test</a></div></div>
+<div class="row g-3">
+@foreach (var t in Model)
+{<div class="col-md-4"><div class="card h-100"><div class="card-body">
+<div class="d-flex justify-content-between"><h6 class="fw-bold">@t.Name</h6><span class="badge @(t.IsActive?"bg-success":"bg-secondary")">@(t.IsActive?"Active":"Off")</span></div>
+<p class="text-muted small">@t.Description</p>
+@if(!string.IsNullOrEmpty(t.Measures)){<span class="badge bg-info bg-opacity-10 text-info">@t.Measures</span>}
+<div class="mt-2"><small class="text-muted">Max Score: @t.MaxScore | @t.Results.Count results</small></div>
+</div><div class="card-footer bg-white"><div class="btn-group btn-group-sm w-100">
+<a asp-action="RecordResult" asp-route-testId="@t.Id" class="btn btn-outline-success"><i class="fas fa-plus me-1"></i>Record</a>
+<a asp-action="Results" asp-route-testId="@t.Id" class="btn btn-outline-primary"><i class="fas fa-list me-1"></i>Results</a>
+<a asp-action="EditTest" asp-route-id="@t.Id" class="btn btn-outline-secondary"><i class="fas fa-edit"></i></a>
+</div></div></div></div>}
+</div>

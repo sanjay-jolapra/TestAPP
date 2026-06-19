@@ -1,0 +1,99 @@
+@using SportsAcademy.Controllers
+@model IEnumerable<AttendanceVM>
+@{ViewData["Title"] = "Attendance";}
+
+<div class="page-header">
+    <div><h1 class="page-title">Daily Attendance</h1><p class="page-subtitle">@ViewBag.Date.ToString("dddd, dd MMMM yyyy")</p></div>
+    <a asp-action="Report" class="btn btn-outline-primary"><i class="fas fa-chart-bar me-1"></i>Attendance Report</a>
+</div>
+
+<!-- Filter -->
+<div class="card mb-3">
+    <div class="card-body py-2">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label mb-1 small fw-semibold">Date</label>
+                <input type="date" name="date" value="@ViewBag.Date.ToString("yyyy-MM-dd")" class="form-control form-control-sm" />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label mb-1 small fw-semibold">Batch</label>
+                <select name="batchId" asp-items="ViewBag.Batches" class="form-select form-select-sm">
+                    <option value="">All Batches</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary btn-sm w-100"><i class="fas fa-filter me-1"></i>Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (Model.Any())
+{
+    <div class="card">
+        <div class="card-header bg-white d-flex justify-content-between">
+            <h6 class="mb-0 fw-bold">Mark Attendance (@Model.Count() students)</h6>
+            <div class="btn-group btn-group-sm" id="markAll">
+                <button class="btn btn-outline-success" onclick="markAll('Present')">All Present</button>
+                <button class="btn btn-outline-danger" onclick="markAll('Absent')">All Absent</button>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <form asp-action="SaveBulk" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="date" value="@ViewBag.Date.ToString("yyyy-MM-dd")" />
+                <input type="hidden" name="batchId" value="@ViewBag.SelectedBatch" />
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead class="table-light">
+                            <tr><th>#</th><th>Student</th><th>Batch</th><th class="text-center">Present</th><th class="text-center">Absent</th><th class="text-center">Late</th></tr>
+                        </thead>
+                        <tbody>
+                            @{int i = 1;}
+                            @foreach (var vm in Model)
+                            {
+                                var current = vm.Record?.Status;
+                                <tr class="attendance-row">
+                                    <td>@i++</td>
+                                    <td>
+                                        <input type="hidden" name="studentIds" value="@vm.Student.Id" />
+                                        <div class="fw-semibold">@vm.Student.Name</div>
+                                        <small class="text-muted">@vm.Student.StudentCode</small>
+                                    </td>
+                                    <td><span class="badge bg-light text-dark">@(vm.Student.Batch?.Name ?? "-")</span></td>
+                                    <td class="text-center">
+                                        <input type="radio" name="statuses" value="Present" class="form-check-input attendance-radio" @(current == AttendanceStatus.Present || current == null ? "checked" : "") />
+                                    </td>
+                                    <td class="text-center">
+                                        <input type="radio" name="statuses" value="Absent" class="form-check-input attendance-radio" @(current == AttendanceStatus.Absent ? "checked" : "") />
+                                    </td>
+                                    <td class="text-center">
+                                        <input type="radio" name="statuses" value="Late" class="form-check-input attendance-radio" @(current == AttendanceStatus.Late ? "checked" : "") />
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="p-3 border-top">
+                    <button type="submit" class="btn btn-primary px-4"><i class="fas fa-save me-2"></i>Save Attendance</button>
+                </div>
+            </form>
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">No students found for the selected filter.</div>
+}
+
+@section Scripts {
+<script>
+function markAll(status) {
+    document.querySelectorAll('.attendance-row').forEach(row => {
+        const radio = row.querySelector(`input[value="${status}"]`);
+        if (radio) radio.checked = true;
+    });
+}
+</script>
+}

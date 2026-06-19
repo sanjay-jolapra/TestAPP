@@ -1,0 +1,106 @@
+@using SportsAcademy.Controllers
+@model AthleteScoreVM
+@{ViewData["Title"] = Model.Student.Name + " Performance";}
+
+<div class="page-header">
+    <div><h1 class="page-title">@Model.Student.Name</h1><p class="page-subtitle">Performance Report — @DateTime.Today.ToString("MMMM yyyy")</p></div>
+    <div class="d-flex gap-2">
+        <a asp-action="Index" class="btn btn-outline-primary btn-sm"><i class="fas fa-list me-1"></i>All Athletes</a>
+        <a asp-controller="Students" asp-action="Details" asp-route-id="@Model.Student.Id" class="btn btn-outline-secondary btn-sm"><i class="fas fa-user me-1"></i>Profile</a>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card text-center p-4">
+            <div class="mb-2">
+                @if (!string.IsNullOrEmpty(Model.Student.PhotoPath))
+                {<img src="@Model.Student.PhotoPath" class="rounded-circle mx-auto d-block" style="width:80px;height:80px;object-fit:cover;" />}
+                else
+                {<div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto" style="width:80px;height:80px;font-size:2rem;font-weight:800;">@Model.Student.Name[0]</div>}
+            </div>
+            <h5 class="fw-bold mb-1">@Model.Student.Name</h5>
+            <div class="mb-2"><code>@Model.Student.StudentCode</code></div>
+            <div class="mb-3">
+                <span class="badge fs-6 tier-@Model.PerformanceTier.ToLower() px-3 py-2">@Model.PerformanceTier</span>
+            </div>
+            <div class="display-4 fw-black text-@Model.TierColor">@Model.OverallScore.ToString("0.0")</div>
+            <div class="text-muted small">Overall Score / 10</div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card h-100 p-3">
+            <h6 class="fw-bold mb-3">Radar Chart — Performance Profile</h6>
+            <canvas id="radarChart" height="250"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    @{
+        var dims = new[]
+        {
+            ("Fitness", Model.FitnessScore, "primary", "fas fa-heartbeat", "20%"),
+            ("Movement Screening", Model.MovementScore, "info", "fas fa-walking", "15%"),
+            ("Skill Development", Model.SkillScore, "success", "fas fa-star", "20%"),
+            ("Strength & Conditioning", Model.SCScore, "warning", "fas fa-dumbbell", "15%"),
+            ("Mental Toughness", Model.MentalScore, "purple", "fas fa-brain", "15%"),
+            ("Teamwork & Leadership", Model.TeamworkScore, "danger", "fas fa-handshake", "15%"),
+        };
+    }
+    @foreach (var (label, score, color, icon, weight) in dims)
+    {
+        <div class="col-md-4">
+            <div class="card p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="fw-semibold small"><i class="@icon me-1 text-@color"></i>@label</span>
+                    <span class="badge bg-light text-dark">@weight weight</span>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="score-bar flex-grow-1">
+                        <div class="score-fill bg-@color" style="width:@(score*10)%;background:var(--bs-@color,#6c757d)"></div>
+                    </div>
+                    <span class="fw-bold text-@color">@score.ToString("0.0")</span>
+                </div>
+            </div>
+        </div>
+    }
+    <div class="col-md-4">
+        <div class="card p-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="fw-semibold small"><i class="fas fa-clipboard-check me-1 text-secondary"></i>Attendance</span>
+                <span class="badge bg-light text-dark">10% modifier</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <div class="score-bar flex-grow-1"><div class="score-fill bg-secondary" style="width:@(Model.AttendanceRate*10)%"></div></div>
+                <span class="fw-bold text-secondary">@Model.AttendanceRate.ToString("0.0")</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+const ctx = document.getElementById('radarChart').getContext('2d');
+new Chart(ctx, {
+    type: 'radar',
+    data: {
+        labels: ['Fitness', 'Movement', 'Skills', 'S&C', 'Mental', 'Teamwork'],
+        datasets: [{
+            label: '@Model.Student.Name',
+            data: [@Model.FitnessScore, @Model.MovementScore, @Model.SkillScore, @Model.SCScore, @Model.MentalScore, @Model.TeamworkScore],
+            backgroundColor: 'rgba(26, 115, 232, 0.15)',
+            borderColor: '#1a73e8',
+            pointBackgroundColor: '#1a73e8',
+            borderWidth: 2,
+            pointRadius: 5
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: { r: { min: 0, max: 10, ticks: { stepSize: 2 } } },
+        plugins: { legend: { display: false } }
+    }
+});
+</script>
+}

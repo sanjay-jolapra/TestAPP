@@ -1,0 +1,34 @@
+@model IEnumerable<FitnessTestResult>
+@{ViewData["Title"] = "Fitness Test Results";}
+<div class="page-header">
+    <div><h1 class="page-title">Fitness Test Results</h1></div>
+    <a asp-action="RecordResult" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Add Result</a>
+</div>
+<div class="card mb-3">
+    <div class="card-body py-2">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-4"><label class="form-label mb-1 small">Test</label><select name="testId" asp-items="ViewBag.Tests" class="form-select form-select-sm"><option value="">All Tests</option></select></div>
+            <div class="col-md-4"><label class="form-label mb-1 small">Student</label><select name="studentId" asp-items="ViewBag.Students" class="form-select form-select-sm"><option value="">All Students</option></select></div>
+            <div class="col-md-2"><button type="submit" class="btn btn-primary btn-sm w-100">Filter</button></div>
+        </form>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+        <table class="table table-hover data-table">
+            <thead><tr><th>Date</th><th>Test</th><th>Student</th><th>Value</th><th>Notes</th></tr></thead>
+            <tbody>
+                @foreach (var r in Model)
+                {
+                    <tr>
+                        <td>@r.TestDate.ToString("dd MMM yyyy")</td>
+                        <td><span class="fw-semibold">@r.FitnessTest?.Name</span><br/><small class="text-muted">@r.FitnessTest?.Measures</small></td>
+                        <td>@r.Student?.Name</td>
+                        <td><span class="badge bg-primary">@r.Value <small>@r.FitnessTest?.MeasurementUnit</small></span></td>
+                        <td><small>@r.Notes</small></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

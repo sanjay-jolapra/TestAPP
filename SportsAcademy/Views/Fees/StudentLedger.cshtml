@@ -1,0 +1,39 @@
+@model IEnumerable<FeePayment>
+@{ViewData["Title"] = "Fee Ledger";}
+
+<div class="page-header">
+    <div><h1 class="page-title">Fee Ledger</h1><p class="page-subtitle">@ViewBag.Student?.Name</p></div>
+    <div class="d-flex gap-2">
+        <a asp-action="Create" asp-route-studentId="@ViewBag.Student?.Id" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Add Payment</a>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
+    </div>
+</div>
+
+<div class="row g-3 mb-3">
+    <div class="col-md-4"><div class="card text-center p-3"><div class="fw-bold fs-3 text-success">₹@ViewBag.Total.ToString("N0")</div><small class="text-muted">Total Paid</small></div></div>
+    <div class="col-md-4"><div class="card text-center p-3"><div class="fw-bold fs-3">@Model.Count()</div><small class="text-muted">Transactions</small></div></div>
+    <div class="col-md-4"><div class="card text-center p-3"><div class="fw-bold fs-3">@(Model.Any() ? Model.Max(p => p.PaidDate).ToString("MMM yyyy") : "-")</div><small class="text-muted">Last Payment</small></div></div>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light"><tr><th>Date</th><th>Amount</th><th>Type</th><th>Period</th><th>Receipt</th><th>Notes</th></tr></thead>
+                <tbody>
+                    @foreach (var p in Model)
+                    {
+                        <tr>
+                            <td>@p.PaidDate.ToString("dd MMM yyyy")</td>
+                            <td><span class="fw-bold text-success">₹@p.Amount.ToString("N0")</span></td>
+                            <td><span class="badge bg-info">@p.PeriodType</span></td>
+                            <td>@(p.PeriodMonth.HasValue ? System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(p.PeriodMonth.Value) + " " + p.PeriodYear : p.PeriodYear?.ToString() ?? "-")</td>
+                            <td><code>@p.ReceiptNo</code></td>
+                            <td><small>@p.Notes</small></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

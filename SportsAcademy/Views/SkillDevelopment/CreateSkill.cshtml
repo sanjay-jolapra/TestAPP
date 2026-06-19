@@ -1,0 +1,12 @@
+@model Skill
+@{ViewData["Title"] = "Add Skill";}
+<div class="page-header"><div><h1 class="page-title">Add Skill</h1></div><a asp-action="Index" class="btn btn-outline-secondary">Back</a></div>
+<div class="card" style="max-width:600px;"><div class="card-body"><form asp-action="CreateSkill" method="post">@Html.AntiForgeryToken()
+<div class="row g-3">
+<div class="col-md-6"><label class="form-label">Group *</label><select asp-for="SkillGroupId" asp-items="ViewBag.Groups" class="form-select"><option value="">Select Group</option></select></div>
+<div class="col-md-6"><label class="form-label">Skill Name *</label><input asp-for="Name" class="form-control" placeholder="e.g. Batting Stance" /></div>
+<div class="col-md-6"><label class="form-label">Measurement Unit</label><input asp-for="MeasurementUnit" class="form-control" placeholder="e.g. Score (1-10)" /></div>
+<div class="col-md-6"><label class="form-label">Measures</label><input asp-for="Measures" class="form-control" placeholder="e.g. Technique" /></div>
+<div class="col-12"><label class="form-label">Description</label><textarea asp-for="Description" class="form-control" rows="2"></textarea></div>
+<div class="col-12"><button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Save Skill</button></div>
+</div></form></div></div>
