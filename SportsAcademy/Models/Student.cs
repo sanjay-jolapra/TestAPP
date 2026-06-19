@@ -46,6 +46,19 @@ public class Student
     [Display(Name = "Jersey Size")]
     public string? JerseySize { get; set; }
 
+    [StringLength(12), MinLength(12)]
+    [Display(Name = "Aadhar Card No.")]
+    [RegularExpression(@"^\d{12}$", ErrorMessage = "Aadhar number must be exactly 12 digits.")]
+    public string? AadharCardNo { get; set; }
+
+    public string? AadharCardPath { get; set; }
+
+    [StringLength(50)]
+    [Display(Name = "MCA Card No.")]
+    public string? MCACardNo { get; set; }
+
+    public string? MCACardPath { get; set; }
+
     [Display(Name = "Joining Date")]
     [DataType(DataType.Date)]
     public DateTime JoiningDate { get; set; } = DateTime.Today;

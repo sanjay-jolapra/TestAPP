@@ -71,6 +71,26 @@
                     <label class="form-label">Address</label>
                     <textarea asp-for="Address" class="form-control" rows="2" placeholder="Full address"></textarea>
                 </div>
+                <div class="col-12"><hr /><h6 class="fw-bold text-muted">Identity Documents</h6></div>
+                <div class="col-md-4">
+                    <label class="form-label">Aadhar Card No.</label>
+                    <input asp-for="AadharCardNo" class="form-control" placeholder="12-digit Aadhar number" maxlength="12" />
+                    <span asp-validation-for="AadharCardNo" class="text-danger small"></span>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Aadhar Card (Upload)</label>
+                    <input type="file" name="aadharCard" class="form-control" accept="image/*,.pdf" />
+                    <small class="text-muted">Image or PDF</small>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">MCA Card No.</label>
+                    <input asp-for="MCACardNo" class="form-control" placeholder="MCA card number" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">MCA Card (Upload)</label>
+                    <input type="file" name="mcaCard" class="form-control" accept="image/*,.pdf" />
+                    <small class="text-muted">Image or PDF</small>
+                </div>
                 <div class="col-12">
                     <hr />
                     <button type="submit" class="btn btn-primary px-4"><i class="fas fa-save me-2"></i>Save Student</button>

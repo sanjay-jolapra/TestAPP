@@ -42,13 +42,17 @@ public class StudentsController : Controller
     }
 
     [HttpPost, ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(Student student, IFormFile? photo)
+    public async Task<IActionResult> Create(Student student, IFormFile? photo, IFormFile? aadharCard, IFormFile? mcaCard)
     {
         if (ModelState.IsValid)
         {
             student.StudentCode = GenerateStudentCode();
             if (photo != null && photo.Length > 0)
-                student.PhotoPath = await SavePhoto(photo);
+                student.PhotoPath = await SaveFile(photo, "photos");
+            if (aadharCard != null && aadharCard.Length > 0)
+                student.AadharCardPath = await SaveFile(aadharCard, "documents");
+            if (mcaCard != null && mcaCard.Length > 0)
+                student.MCACardPath = await SaveFile(mcaCard, "documents");
             _db.Students.Add(student);
             await _db.SaveChangesAsync();
             TempData["Success"] = "Student added successfully!";
@@ -67,7 +71,7 @@ public class StudentsController : Controller
     }
 
     [HttpPost, ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, Student student, IFormFile? photo)
+    public async Task<IActionResult> Edit(int id, Student student, IFormFile? photo, IFormFile? aadharCard, IFormFile? mcaCard)
     {
         if (id != student.Id) return BadRequest();
         if (ModelState.IsValid)
@@ -85,8 +89,14 @@ public class StudentsController : Controller
             existing.JerseySize = student.JerseySize;
             existing.JoiningDate = student.JoiningDate;
             existing.BatchId = student.BatchId;
+            existing.AadharCardNo = student.AadharCardNo;
+            existing.MCACardNo = student.MCACardNo;
             if (photo != null && photo.Length > 0)
-                existing.PhotoPath = await SavePhoto(photo);
+                existing.PhotoPath = await SaveFile(photo, "photos");
+            if (aadharCard != null && aadharCard.Length > 0)
+                existing.AadharCardPath = await SaveFile(aadharCard, "documents");
+            if (mcaCard != null && mcaCard.Length > 0)
+                existing.MCACardPath = await SaveFile(mcaCard, "documents");
             await _db.SaveChangesAsync();
             TempData["Success"] = "Student updated successfully!";
             return RedirectToAction(nameof(Index));
@@ -114,15 +124,15 @@ public class StudentsController : Controller
         return $"SA{DateTime.Now.Year}{count:D4}";
     }
 
-    private async Task<string> SavePhoto(IFormFile photo)
+    private async Task<string> SaveFile(IFormFile file, string subfolder)
     {
-        var uploadsDir = Path.Combine(_env.WebRootPath, "uploads", "photos");
+        var uploadsDir = Path.Combine(_env.WebRootPath, "uploads", subfolder);
         Directory.CreateDirectory(uploadsDir);
-        var ext = Path.GetExtension(photo.FileName);
+        var ext = Path.GetExtension(file.FileName);
         var fileName = $"{Guid.NewGuid()}{ext}";
         var path = Path.Combine(uploadsDir, fileName);
         using var stream = new FileStream(path, FileMode.Create);
-        await photo.CopyToAsync(stream);
-        return $"/uploads/photos/{fileName}";
+        await file.CopyToAsync(stream);
+        return $"/uploads/{subfolder}/{fileName}";
     }
 }
