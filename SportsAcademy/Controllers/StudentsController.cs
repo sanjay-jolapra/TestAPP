@@ -1,3 +1,4 @@
+using SportsAcademy.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +7,7 @@ using SportsAcademy.Models;
 
 namespace SportsAcademy.Controllers;
 
+[ModulePermission("Students")]
 public class StudentsController : Controller
 {
     private readonly ApplicationDbContext _db;

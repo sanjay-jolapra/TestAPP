@@ -1,3 +1,4 @@
+using SportsAcademy.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SportsAcademy.Data;
@@ -5,6 +6,7 @@ using SportsAcademy.Models;
 
 namespace SportsAcademy.Controllers;
 
+[ModulePermission("Batches")]
 public class BatchesController : Controller
 {
     private readonly ApplicationDbContext _db;

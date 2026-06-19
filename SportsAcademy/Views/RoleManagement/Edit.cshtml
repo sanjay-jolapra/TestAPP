@@ -1,0 +1,125 @@
+@model SportsAcademy.Models.ViewModels.RoleViewModel
+@{
+    ViewData["Title"] = "Edit Role – " + Model.Name;
+}
+
+<div class="d-flex align-items-center mb-4">
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm me-3"><i class="fas fa-arrow-left"></i></a>
+    <h4 class="mb-0 fw-bold"><i class="fas fa-shield-alt me-2 text-primary"></i>Edit Role: @Model.Name</h4>
+</div>
+
+<form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+    @Html.AntiForgeryToken()
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent fw-semibold">Role Details</div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label fw-semibold"></label>
+                        <input asp-for="Name" class="form-control" @(Model.Name == "SuperAdmin" ? "readonly" : "") />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label fw-semibold"></label>
+                        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="form-check">
+                        <input asp-for="IsActive" class="form-check-input" @(Model.Name == "SuperAdmin" ? "disabled" : "") />
+                        <label asp-for="IsActive" class="form-check-label">Active</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                    <span class="fw-semibold">Module Permissions</span>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-sm btn-outline-success" onclick="toggleAll(true)">Grant All</button>
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="toggleAll(false)">Revoke All</button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-sm mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-3">Module</th>
+                                <th class="text-center">View</th>
+                                <th class="text-center">Create</th>
+                                <th class="text-center">Edit</th>
+                                <th class="text-center">Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{ string? lastSection = null; }
+                            @for (int i = 0; i < Model.ModulePermissions.Count; i++)
+                            {
+                                var mp = Model.ModulePermissions[i];
+                                if (mp.Section != lastSection)
+                                {
+                                    lastSection = mp.Section;
+                                    <tr class="table-secondary">
+                                        <td colspan="5" class="ps-3 py-1"><small class="fw-bold text-uppercase text-muted">@mp.Section</small></td>
+                                    </tr>
+                                }
+                                <tr>
+                                    <td class="ps-3">
+                                        <input type="hidden" name="ModulePermissions[@i].ModuleId" value="@mp.ModuleId" />
+                                        <input type="hidden" name="ModulePermissions[@i].ModuleName" value="@mp.ModuleName" />
+                                        <input type="hidden" name="ModulePermissions[@i].DisplayName" value="@mp.DisplayName" />
+                                        <input type="hidden" name="ModulePermissions[@i].Icon" value="@mp.Icon" />
+                                        <input type="hidden" name="ModulePermissions[@i].Section" value="@mp.Section" />
+                                        <i class="@mp.Icon me-2 text-primary"></i>@mp.DisplayName
+                                    </td>
+                                    <td class="text-center">
+                                        <input type="checkbox" class="form-check-input perm-view" name="ModulePermissions[@i].CanView"
+                                               value="true" data-idx="@i" onchange="onViewChange(this,@i)"
+                                               @(mp.CanView ? "checked" : "") />
+                                    </td>
+                                    <td class="text-center">
+                                        <input type="checkbox" class="form-check-input perm-create" name="ModulePermissions[@i].CanCreate"
+                                               value="true" data-idx="@i" onchange="ensureView(this,@i)"
+                                               @(mp.CanCreate ? "checked" : "") />
+                                    </td>
+                                    <td class="text-center">
+                                        <input type="checkbox" class="form-check-input perm-edit" name="ModulePermissions[@i].CanEdit"
+                                               value="true" data-idx="@i" onchange="ensureView(this,@i)"
+                                               @(mp.CanEdit ? "checked" : "") />
+                                    </td>
+                                    <td class="text-center">
+                                        <input type="checkbox" class="form-check-input perm-delete" name="ModulePermissions[@i].CanDelete"
+                                               value="true" data-idx="@i" onchange="ensureView(this,@i)"
+                                               @(mp.CanDelete ? "checked" : "") />
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mt-4 d-flex gap-2">
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Save Permissions</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+</form>
+
+@section Scripts {
+<script>
+function ensureView(cb, idx) {
+    if (cb.checked) document.querySelector(`.perm-view[data-idx='${idx}']`).checked = true;
+}
+function onViewChange(cb, idx) {
+    if (!cb.checked) {
+        document.querySelector(`.perm-create[data-idx='${idx}']`).checked = false;
+        document.querySelector(`.perm-edit[data-idx='${idx}']`).checked = false;
+        document.querySelector(`.perm-delete[data-idx='${idx}']`).checked = false;
+    }
+}
+function toggleAll(state) {
+    document.querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = state);
+}
+</script>
+}

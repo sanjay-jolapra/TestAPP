@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SportsAcademy.Models;
+using SportsAcademy.Models.Auth;
 
 namespace SportsAcademy.Data;
 
@@ -7,6 +8,7 @@ public class ApplicationDbContext : DbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
+    // Existing domain tables
     public DbSet<Batch> Batches => Set<Batch>();
     public DbSet<Student> Students => Set<Student>();
     public DbSet<AttendanceRecord> AttendanceRecords => Set<AttendanceRecord>();
@@ -29,9 +31,37 @@ public class ApplicationDbContext : DbContext
     public DbSet<NutritionLog> NutritionLogs => Set<NutritionLog>();
     public DbSet<NutritionGoal> NutritionGoals => Set<NutritionGoal>();
 
+    // Auth tables
+    public DbSet<AppRole> AppRoles => Set<AppRole>();
+    public DbSet<AppUser> AppUsers => Set<AppUser>();
+    public DbSet<AppModule> AppModules => Set<AppModule>();
+    public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        // Auth relationships
+        modelBuilder.Entity<AppUser>()
+            .HasOne(u => u.Role)
+            .WithMany(r => r.Users)
+            .HasForeignKey(u => u.RoleId);
+
+        modelBuilder.Entity<RolePermission>()
+            .HasOne(rp => rp.Role)
+            .WithMany(r => r.Permissions)
+            .HasForeignKey(rp => rp.RoleId);
+
+        modelBuilder.Entity<RolePermission>()
+            .HasOne(rp => rp.Module)
+            .WithMany(m => m.RolePermissions)
+            .HasForeignKey(rp => rp.ModuleId);
+
+        modelBuilder.Entity<AppUser>()
+            .HasIndex(u => u.Username)
+            .IsUnique();
+
+        // ── Existing seed data ──────────────────────────────────────
 
         modelBuilder.Entity<Batch>().HasData(
             new Batch { Id = 1, Name = "Morning Batch", StartTime = new TimeSpan(6, 0, 0), EndTime = new TimeSpan(8, 0, 0) },

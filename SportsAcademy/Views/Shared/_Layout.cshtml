@@ -1,3 +1,12 @@
+@using SportsAcademy.Services
+@inject IPermissionService PermissionService
+@{
+    var roleIdStr = User.FindFirst("RoleId")?.Value;
+    int roleId = int.TryParse(roleIdStr, out var rid) ? rid : 0;
+    bool isSuperAdmin = User.FindFirst("RoleName")?.Value == "SuperAdmin";
+    string Active(string ctrl) =>
+        ViewContext.RouteData.Values["controller"]?.ToString() == ctrl ? "active" : "";
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,79 +27,163 @@
             <span>Sports Academy Pro</span>
         </div>
         <ul class="sidebar-nav flex-grow-1">
-            <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")" asp-controller="Home" asp-action="Index">
-                    <i class="fas fa-tachometer-alt"></i> Dashboard
-                </a>
-            </li>
-            <li class="nav-section">MANAGEMENT</li>
-            <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Batches" ? "active" : "")" asp-controller="Batches" asp-action="Index">
-                    <i class="fas fa-layer-group"></i> Batches
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Students" ? "active" : "")" asp-controller="Students" asp-action="Index">
-                    <i class="fas fa-users"></i> Students
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Attendance" ? "active" : "")" asp-controller="Attendance" asp-action="Index">
-                    <i class="fas fa-clipboard-check"></i> Attendance
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Fees" ? "active" : "")" asp-controller="Fees" asp-action="Index">
-                    <i class="fas fa-rupee-sign"></i> Fees
-                </a>
-            </li>
-            <li class="nav-section">ASSESSMENTS</li>
-            <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "FitnessTests" ? "active" : "")" asp-controller="FitnessTests" asp-action="Index">
-                    <i class="fas fa-heartbeat"></i> Fitness Tests
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "MovementScreening" ? "active" : "")" asp-controller="MovementScreening" asp-action="Index">
-                    <i class="fas fa-walking"></i> Movement Screening
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "SkillDevelopment" ? "active" : "")" asp-controller="SkillDevelopment" asp-action="Index">
-                    <i class="fas fa-star"></i> Skill Development
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "StrengthConditioning" ? "active" : "")" asp-controller="StrengthConditioning" asp-action="Index">
-                    <i class="fas fa-dumbbell"></i> Strength & Conditioning
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "MentalToughness" ? "active" : "")" asp-controller="MentalToughness" asp-action="Index">
-                    <i class="fas fa-brain"></i> Mental Toughness
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Teamwork" ? "active" : "")" asp-controller="Teamwork" asp-action="Index">
-                    <i class="fas fa-handshake"></i> Teamwork & Leadership
-                </a>
-            </li>
-            <li class="nav-section">HEALTH & ANALYTICS</li>
-            <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "InjuryTracking" ? "active" : "")" asp-controller="InjuryTracking" asp-action="Index">
-                    <i class="fas fa-band-aid"></i> Injury Tracking
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Nutrition" ? "active" : "")" asp-controller="Nutrition" asp-action="Index">
-                    <i class="fas fa-apple-alt"></i> Nutrition
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Performance" ? "active" : "")" asp-controller="Performance" asp-action="Index">
-                    <i class="fas fa-chart-radar"></i> AI Performance Score
-                </a>
-            </li>
+
+            @if (await PermissionService.HasPermissionAsync(roleId, "Dashboard"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link @Active("Home")" asp-controller="Home" asp-action="Index">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                </li>
+            }
+
+            @{
+                bool showMgmt = await PermissionService.HasPermissionAsync(roleId, "Batches") ||
+                                await PermissionService.HasPermissionAsync(roleId, "Students") ||
+                                await PermissionService.HasPermissionAsync(roleId, "Attendance") ||
+                                await PermissionService.HasPermissionAsync(roleId, "Fees");
+            }
+            @if (showMgmt) { <li class="nav-section">MANAGEMENT</li> }
+
+            @if (await PermissionService.HasPermissionAsync(roleId, "Batches"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link @Active("Batches")" asp-controller="Batches" asp-action="Index">
+                        <i class="fas fa-layer-group"></i> Batches
+                    </a>
+                </li>
+            }
+            @if (await PermissionService.HasPermissionAsync(roleId, "Students"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link @Active("Students")" asp-controller="Students" asp-action="Index">
+                        <i class="fas fa-users"></i> Students
+                    </a>
+                </li>
+            }
+            @if (await PermissionService.HasPermissionAsync(roleId, "Attendance"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link @Active("Attendance")" asp-controller="Attendance" asp-action="Index">
+                        <i class="fas fa-clipboard-check"></i> Attendance
+                    </a>
+                </li>
+            }
+            @if (await PermissionService.HasPermissionAsync(roleId, "Fees"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link @Active("Fees")" asp-controller="Fees" asp-action="Index">
+                        <i class="fas fa-rupee-sign"></i> Fees
+                    </a>
+                </li>
+            }
+
+            @{
+                bool showAssess = await PermissionService.HasPermissionAsync(roleId, "FitnessTests") ||
+                                  await PermissionService.HasPermissionAsync(roleId, "MovementScreening") ||
+                                  await PermissionService.HasPermissionAsync(roleId, "SkillDevelopment") ||
+                                  await PermissionService.HasPermissionAsync(roleId, "StrengthConditioning") ||
+                                  await PermissionService.HasPermissionAsync(roleId, "MentalToughness") ||
+                                  await PermissionService.HasPermissionAsync(roleId, "Teamwork");
+            }
+            @if (showAssess) { <li class="nav-section">ASSESSMENTS</li> }
+
+            @if (await PermissionService.HasPermissionAsync(roleId, "FitnessTests"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link @Active("FitnessTests")" asp-controller="FitnessTests" asp-action="Index">
+                        <i class="fas fa-heartbeat"></i> Fitness Tests
+                    </a>
+                </li>
+            }
+            @if (await PermissionService.HasPermissionAsync(roleId, "MovementScreening"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link @Active("MovementScreening")" asp-controller="MovementScreening" asp-action="Index">
+                        <i class="fas fa-walking"></i> Movement Screening
+                    </a>
+                </li>
+            }
+            @if (await PermissionService.HasPermissionAsync(roleId, "SkillDevelopment"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link @Active("SkillDevelopment")" asp-controller="SkillDevelopment" asp-action="Index">
+                        <i class="fas fa-star"></i> Skill Development
+                    </a>
+                </li>
+            }
+            @if (await PermissionService.HasPermissionAsync(roleId, "StrengthConditioning"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link @Active("StrengthConditioning")" asp-controller="StrengthConditioning" asp-action="Index">
+                        <i class="fas fa-dumbbell"></i> Strength &amp; Conditioning
+                    </a>
+                </li>
+            }
+            @if (await PermissionService.HasPermissionAsync(roleId, "MentalToughness"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link @Active("MentalToughness")" asp-controller="MentalToughness" asp-action="Index">
+                        <i class="fas fa-brain"></i> Mental Toughness
+                    </a>
+                </li>
+            }
+            @if (await PermissionService.HasPermissionAsync(roleId, "Teamwork"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link @Active("Teamwork")" asp-controller="Teamwork" asp-action="Index">
+                        <i class="fas fa-handshake"></i> Teamwork &amp; Leadership
+                    </a>
+                </li>
+            }
+
+            @{
+                bool showHealth = await PermissionService.HasPermissionAsync(roleId, "InjuryTracking") ||
+                                  await PermissionService.HasPermissionAsync(roleId, "Nutrition") ||
+                                  await PermissionService.HasPermissionAsync(roleId, "Performance");
+            }
+            @if (showHealth) { <li class="nav-section">HEALTH &amp; ANALYTICS</li> }
+
+            @if (await PermissionService.HasPermissionAsync(roleId, "InjuryTracking"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link @Active("InjuryTracking")" asp-controller="InjuryTracking" asp-action="Index">
+                        <i class="fas fa-band-aid"></i> Injury Tracking
+                    </a>
+                </li>
+            }
+            @if (await PermissionService.HasPermissionAsync(roleId, "Nutrition"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link @Active("Nutrition")" asp-controller="Nutrition" asp-action="Index">
+                        <i class="fas fa-apple-alt"></i> Nutrition
+                    </a>
+                </li>
+            }
+            @if (await PermissionService.HasPermissionAsync(roleId, "Performance"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link @Active("Performance")" asp-controller="Performance" asp-action="Index">
+                        <i class="fas fa-chart-line"></i> AI Performance Score
+                    </a>
+                </li>
+            }
+
+            @if (isSuperAdmin)
+            {
+                <li class="nav-section">ADMINISTRATION</li>
+                <li class="nav-item">
+                    <a class="nav-link @Active("UserManagement")" asp-controller="UserManagement" asp-action="Index">
+                        <i class="fas fa-users-cog"></i> User Management
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @Active("RoleManagement")" asp-controller="RoleManagement" asp-action="Index">
+                        <i class="fas fa-shield-alt"></i> Role Management
+                    </a>
+                </li>
+            }
+
         </ul>
         <div class="sidebar-footer">
             <small>Sports Academy Pro &copy; @DateTime.Now.Year</small>
@@ -107,6 +200,29 @@
                 <span class="navbar-text ms-3 fw-semibold text-muted">@ViewData["Title"]</span>
                 <div class="ms-auto d-flex align-items-center gap-2">
                     <span class="badge bg-primary"><i class="fas fa-calendar me-1"></i>@DateTime.Now.ToString("dd MMM yyyy")</span>
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-1"
+                                    type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user-circle"></i>
+                                <span>@User.FindFirst("FullName")?.Value</span>
+                                <span class="badge bg-secondary ms-1">@User.FindFirst("RoleName")?.Value</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow">
+                                <li><h6 class="dropdown-header"><i class="fas fa-user me-1"></i>@User.Identity.Name</h6></li>
+                                <li><hr class="dropdown-divider" /></li>
+                                <li>
+                                    <form asp-controller="Account" asp-action="Logout" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="dropdown-item text-danger">
+                                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    }
                 </div>
             </div>
         </nav>
